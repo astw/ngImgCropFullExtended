@@ -119,7 +119,8 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function ($time
 
                         updateAreaCoords(scope);
                         scope.onChange({
-                            $dataURI: scope.resultImage
+                            $dataURI: scope.resultImage,
+							$cropject:scope.cropject
                         });
                     }
                 }

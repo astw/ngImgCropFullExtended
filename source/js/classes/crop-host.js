@@ -1,6 +1,6 @@
 'use strict';
 
-crop.factory('cropHost', ['$document', '$q', 'cropAreaCircle', 'cropAreaSquare', 'cropAreaRectangle', 'cropEXIF', function ($document, $q, CropAreaCircle, CropAreaSquare, CropAreaRectangle, cropEXIF) {
+crop.factory('cropHost', ['$document', '$q', 'cropAreaCircle', 'cropAreaEllipse', 'cropAreaSquare', 'cropAreaRectangle', 'cropEXIF', function ($document, $q, CropAreaCircle, CropAreaEllipse, CropAreaSquare, CropAreaRectangle, cropEXIF) {
     /* STATIC FUNCTIONS */
 
     // Get Element's Offset
@@ -364,7 +364,10 @@ crop.factory('cropHost', ['$document', '$q', 'cropAreaCircle', 'cropAreaSquare',
                         0,
                         0,
                         Math.round(resultWidth),
-                        Math.round(resultHeight));
+                        Math.round(resultHeight)); 
+ 
+				   
+				   drawEllipse(temp_ctx, x,y,Math.round(resultWidth),Math.round(resultHeight))
                 }
             }
 
@@ -381,6 +384,27 @@ crop.factory('cropHost', ['$document', '$q', 'cropAreaCircle', 'cropAreaSquare',
             return _p.promise;
         };
 
+		function drawEllipse(canvasContext, x, y, width, height){
+		  var z = canvasContext, 
+			  X = Math.round(x), 
+			  Y = Math.round(y), 
+			  wd = Math.round(width), 
+			  ht = Math.round(height), 
+			  h6 = Math.round(ht/6);
+		  var y2 = Math.round(Y+ht/2),
+			  xw = X+wd, 
+			  ym = Y-h6, 
+			  yp = Y+ht+h6;
+			  
+			  z.beginPath(); 
+			  z.moveTo(X, y2); 
+			  z.bezierCurveTo(X, ym, xw, ym, xw, y2); 
+			  z.bezierCurveTo(xw, yp, X, yp, X, y2);  
+			  z.stroke(); 
+
+			  return z;
+		}
+		
         this.getAreaCoords = function () {
             return theArea.getSize();
         };
@@ -784,7 +808,9 @@ crop.factory('cropHost', ['$document', '$q', 'cropAreaCircle', 'cropAreaSquare',
                 AreaClass = CropAreaSquare;
             } else if (type === 'rectangle') {
                 AreaClass = CropAreaRectangle;
-            }
+            } else if (type === 'ellipse') {
+				AreaClass = CropAreaEllipse;
+			}
             theArea = new AreaClass(ctx, events);
             theArea.setMinSize(curMinSize);
             theArea.setSize(curSize);
